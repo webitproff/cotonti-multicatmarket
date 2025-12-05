@@ -15,7 +15,7 @@ Before installing this plugin, each Market page could belong to only one categor
 Thus, the plugin is completely transparent to the user and other extensions: everything continues to work as before, but a new feature appears — **multi-categorization**.
 
 > **Important:** The plugin will not work with your Market module if it is not version 5 and not developed by me.
-> You can order adaptation of the plugin for freelance exchange builds. To do so, write to me on the page.
+> You can order adaptation of the plugin for **[ freelance exchange builds](https://github.com/webitproff/cot_2waydeal_build)**. . To do so, **[write to me on the page](https://abuyfile.com/users/webitproff)**
 
 ---
 
