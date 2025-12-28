@@ -30,6 +30,8 @@ function multicatmarket_get_cats($page_id)
     return array_column($res->fetchAll(), 'pcat_cat_id');
 }
 
+
+
 /**
  * Получает заголовки категорий для указанной страницы, используя structure_id.
  *
@@ -39,28 +41,54 @@ function multicatmarket_get_cats($page_id)
 function multicatmarket_get_cat_titles($page_id)
 {
     global $db, $db_structure, $structure;
+    // Подключаем глобальные переменные i18n4marketpro (аналогично cot_market_selectbox_structure_select2 и edit.tags.php)
+    global $i18n4marketpro_enabled, $i18n4marketpro_read, $i18n4marketpro_notmain, $i18n4marketpro_locale;
+    // Определяем, активен ли перевод категорий (текущий язык не основной)
+    $i18n_enabled = $i18n4marketpro_read && (!empty($i18n4marketpro_locale) && $i18n4marketpro_locale != Cot::$cfg['defaultlang']);
     $cats = multicatmarket_get_cats($page_id);
     $titles = [];
     if (!empty($cats)) {
-        $sql = "SELECT structure_id, structure_title FROM $db_structure WHERE structure_id IN (" . implode(',', array_map('intval', $cats)) . ") AND structure_area = 'market'";
+        // Расширяем SQL, чтобы получить structure_code (нужен для перевода)
+        $sql = "SELECT structure_id, structure_title, structure_code FROM $db_structure WHERE structure_id IN (" . implode(',', array_map('intval', $cats)) . ") AND structure_area = 'market'";
         $res = $db->query($sql);
-        $db_titles = array_column($res->fetchAll(), 'structure_title', 'structure_id');
+        // Индексируем по structure_id
+        $db_cats = [];
+        foreach ($res->fetchAll() as $row) {
+            $db_cats[$row['structure_id']] = $row;
+        }
         foreach ($cats as $cat_id) {
-            if (isset($db_titles[$cat_id])) {
-                $titles[] = $db_titles[$cat_id];
+            if (isset($db_cats[$cat_id])) {
+                $code = $db_cats[$cat_id]['structure_code'];
+                $title = $db_cats[$cat_id]['structure_title'];
             } else {
                 // Fallback: ищем в $structure['market'] по structure_id
-                foreach ($structure['market'] as $code => $cat_data) {
+                $code = null;
+                $title = null;
+                foreach ($structure['market'] as $struct_code => $cat_data) {
                     if (isset($cat_data['id']) && $cat_data['id'] == $cat_id) {
-                        $titles[] = $cat_data['title'] ?? $code;
+                        $code = $struct_code;
+                        $title = $cat_data['title'] ?? $code;
                         break;
                     }
                 }
+                if ($title === null) {
+                    continue; // Если не нашли — пропускаем
+                }
             }
+            // Если активен плагин i18n4marketpro и перевод включён — берём переведённое название
+            if (cot_plugin_active('i18n4marketpro') && $i18n_enabled && $code !== null) {
+                $translated_cat = cot_i18n4marketpro_get_cat($code, $i18n4marketpro_locale);
+                if ($translated_cat && !empty($translated_cat['title'])) {
+                    $title = $translated_cat['title'];
+                }
+            }
+            $titles[] = $title;
         }
     }
     return $titles;
 }
+
+
 
 /**
  * Сохраняет категории (structure_id) для страницы, заменяя существующие связи.
@@ -82,4 +110,5 @@ function multicatmarket_save_cats($page_id, $cats)
         $db->insert($db_market_multicats, ['pcat_page_id' => $page_id, 'pcat_cat_id' => $cat_id]);
     }
     return true;
+
 }
