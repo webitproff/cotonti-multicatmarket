@@ -28,10 +28,37 @@ Thus, the plugin is completely transparent to the user and other extensions: eve
 ```html
 <!-- IF {PHP|cot_plugin_active('multicatmarket')} -->
 <div class="col-12">
-    <label for="marketCat" class="form-label fw-semibold">{PHP.L.multicatmarket_cats_edit}</label>
-    <div class="input-group has-validation">{MARKET_FORM_MULTICAT}</div>
-    <small class="form-text text-muted mt-1">{MARKET_FORM_MULTICAT_HINT}</small>
+	<label for="marketCat" class="form-label fw-semibold">{PHP.L.multicatmarket_cats_edit}</label>
+	<div class="multicat-checkboxes">{MARKET_FORM_MULTICAT}</div>
+	<small class="form-text text-muted mt-1">{MARKET_FORM_MULTICAT_HINT}</small>
 </div>
+<!-- ENDIF -->
+```	
+...
+
+```html
+<!-- IF {PHP|cot_plugin_active('multicatmarket')} -->
+<style>
+/* Красивый вертикальный список категорий в форме редактирования товара (multicat) */
+.multicat-checkboxes .form-check {
+    display: block;          /* Каждый чекбокс на новой строке */
+    margin-bottom: 0.75rem;  /* Отступ между элементами */
+
+}
+
+.multicat-checkboxes .form-check + br {
+    display: none;           /* Скрываем <br>, они больше не нужны */
+}
+
+.multicat-checkboxes .form-check-label {
+    font-weight: normal;     /* По желанию — убираем жирность, если хочется легче */
+    cursor: pointer;
+}
+
+.multicat-checkboxes .form-check-input {
+    margin-right: 0.5rem;    /* Небольшой отступ между чекбоксом и текстом */
+}
+</style>
 <!-- ENDIF -->
 ```
 
@@ -227,13 +254,40 @@ ___
 3. После установки плагина, в шаблон `market.edit.tpl` добавить два тега сразу после стандартного селектора категорий:
 
 ```html
-	<!-- IF {PHP|cot_plugin_active('multicatmarket')} -->
-	<div class="col-12">
-		<label for="marketCat" class="form-label fw-semibold">{PHP.L.multicatmarket_cats_edit}</label>
-		<div class="input-group has-validation">{MARKET_FORM_MULTICAT}</div>
-		<small class="form-text text-muted mt-1">{MARKET_FORM_MULTICAT_HINT}</small>
-	</div>
-	<!-- ENDIF -->
+<!-- IF {PHP|cot_plugin_active('multicatmarket')} -->
+<div class="col-12">
+	<label for="marketCat" class="form-label fw-semibold">{PHP.L.multicatmarket_cats_edit}</label>
+	<div class="multicat-checkboxes">{MARKET_FORM_MULTICAT}</div>
+	<small class="form-text text-muted mt-1">{MARKET_FORM_MULTICAT_HINT}</small>
+</div>
+<!-- ENDIF -->
+```	
+...
+
+```html
+<!-- IF {PHP|cot_plugin_active('multicatmarket')} -->
+<style>
+/* Красивый вертикальный список категорий в форме редактирования товара (multicat) */
+.multicat-checkboxes .form-check {
+    display: block;          /* Каждый чекбокс на новой строке */
+    margin-bottom: 0.75rem;  /* Отступ между элементами */
+
+}
+
+.multicat-checkboxes .form-check + br {
+    display: none;           /* Скрываем <br>, они больше не нужны */
+}
+
+.multicat-checkboxes .form-check-label {
+    font-weight: normal;     /* По желанию — убираем жирность, если хочется легче */
+    cursor: pointer;
+}
+
+.multicat-checkboxes .form-check-input {
+    margin-right: 0.5rem;    /* Небольшой отступ между чекбоксом и текстом */
+}
+</style>
+<!-- ENDIF -->
 ```
 в шаблон `market.admin.tpl`
 в нужном месте, например сразу после статуса, добавить
