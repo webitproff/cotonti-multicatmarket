@@ -18,7 +18,7 @@ Hooks=market.edit.update.import
  */
 
 defined('COT_CODE') or die('Wrong URL');
-
+$item['fieldmrkt_cat'] = cot_import('rcat', 'P', 'ALP');
 if (!isset($_POST['rcat']) || !is_array($_POST['rcat']) || empty($_POST['rcat'])) {
     cot_error($L['multicatmarket_error_no_category']);
 } else {
@@ -28,3 +28,4 @@ if (!isset($_POST['rcat']) || !is_array($_POST['rcat']) || empty($_POST['rcat'])
             WHERE structure_id = $first_cat_id AND structure_area = 'market'";
     $item['fieldmrkt_cat'] = $db->query($sql)->fetchColumn() ?: $item['fieldmrkt_cat'];
 }
+
