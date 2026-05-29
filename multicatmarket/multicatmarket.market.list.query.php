@@ -9,46 +9,50 @@ Hooks=market.list.query
  * Multicat plugin for Market Module, CMF Cotonti Siena v.0.9.26, PHP v.8.4+, MySQL v.8.0
  * Filename: multicatmarket.market.list.query.php
  * Purpose: Хук для market.list.query, modules\market\inc\market.list.php, str 195. Фильтр списка страниц по выбранной категории $c, учитывая мультикатегории.
- * Date=2025-12-05
+ * Date=2026-05-29
  * @package multicat
- * @version 1.1.0
+ * @version 1.2.0
  * @author webitproff
  * @copyright Copyright (c) webitproff 2025 | https://github.com/webitproff
  * @license BSD
  */
 
+
 defined('COT_CODE') or die('Wrong URL');
 
-global $c, $db_market_multicats, $where, $join_condition;
+Cot::$db->registerTable('market_multicats');
+
+global $c, $where, $structure;
+
+if (empty($c) || !isset($structure['market'][$c])) {
+    return;
+}
 
 $db = Cot::$db;
-$db_structure = $db->structure;
-$db_market_multicats = $db->market_multicats;
+$cat_id = (int)$db->query(
+    "SELECT structure_id FROM {$db->structure}
+     WHERE structure_code = " . $db->quote($c) . "
+       AND structure_area = 'market'"
+)->fetchColumn();
 
-if (!empty($c)) {
-    // Получаем ID структуры по коду категории
-    $sql = "SELECT structure_id
-              FROM " . $db_structure . "
-             WHERE structure_code = " . $db->quote($c) . "
-               AND structure_area = 'market'";
-    $cat_id = (int)$db->query($sql)->fetchColumn();
-
-    if ($cat_id) {
-        // Подмена условия фильтрации: используем алиас p (так как в основном запросе используется p)
-        if (isset($where['cat'])) {
-            $where['cat'] = "(" . $where['cat'] . " OR EXISTS (
-                SELECT 1
-                  FROM " . $db_market_multicats . " AS pc
-                 WHERE pc.pcat_page_id = p.fieldmrkt_id
-                   AND pc.pcat_cat_id = " . (int)$cat_id . "
-            ))";
-        } else {
-            $where['cat'] = "(p.fieldmrkt_cat = " . $db->quote($c) . " OR EXISTS (
-                SELECT 1
-                  FROM " . $db_market_multicats . " AS pc
-                 WHERE pc.pcat_page_id = p.fieldmrkt_id
-                   AND pc.pcat_cat_id = " . (int)$cat_id . "
-            ))";
-        }
-    }
+if ($cat_id <= 0) {
+    return;
 }
+
+// Все подкатегории текущей категории (включая её саму)
+$catsub = cot_structure_children('market', $c, true);
+$catsub[] = $c;
+$catsub_quoted = array_map([$db, 'quote'], $catsub);
+
+// Основное условие: товар лежит в одной из указанных категорий (с учётом подкатегорий)
+$main_cond = "fieldmrkt_cat IN (" . implode(',', $catsub_quoted) . ")";
+
+// Дополнительное условие: товар привязан к текущей категории через мультикатегории
+$multi_cond = "p.fieldmrkt_id IN (
+    SELECT pcat_page_id
+    FROM {$db->market_multicats}
+    WHERE pcat_cat_id = {$cat_id}
+)";
+
+// Перезаписываем условие, не расширяем
+$where['cat'] = "(" . $main_cond . " OR " . $multi_cond . ")";
