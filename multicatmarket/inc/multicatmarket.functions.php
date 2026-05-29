@@ -2,11 +2,11 @@
 
 /**
  * Multicat plugin for Market Module, CMF Cotonti Siena v.0.9.26, PHP v.8.4+, MySQL v.8.0
- * Filename: inc/multicat.functions.php
+ * Filename: inc/multicatmarket.functions.php
  * Purpose: Основные функции для обработки множественных категорий страниц в плагине Multicat. Использует $structure['market'] для получения заголовков и прямые SQL-запросы для работы с cot_market_multicats.
- * Date=2025-12-05
+ * Date=2026-05-29
  * @package multicat
- * @version 1.1.0
+ * @version 1.2.0
  * @author webitproff
  * @copyright Copyright (c) webitproff 2025 | https://github.com/webitproff
  * @license BSD
@@ -29,7 +29,6 @@ function multicatmarket_get_cats($page_id)
     $res = $db->query($sql);
     return array_column($res->fetchAll(), 'pcat_cat_id');
 }
-
 
 
 /**
@@ -110,5 +109,4 @@ function multicatmarket_save_cats($page_id, $cats)
         $db->insert($db_market_multicats, ['pcat_page_id' => $page_id, 'pcat_cat_id' => $cat_id]);
     }
     return true;
-
 }
