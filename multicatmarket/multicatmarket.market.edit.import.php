@@ -9,9 +9,9 @@ Hooks=market.edit.update.import
  * Multicat plugin for Market Module, CMF Cotonti Siena v.0.9.26, PHP v.8.4+, MySQL v.8.0
  * Filename: multicatmarket.market.edit.import.php
  * Purpose: Хук для market.edit.update.import, modules\market\inc\market.edit.php, str 72. Импортирует категории из POST и устанавливает первую как fieldmrkt_cat (алиас/код категории в таблице маркет).
- * Date=2025-12-05
+ * Date=2026-05-29
  * @package multicat
- * @version 1.1.0
+ * @version 1.2.0
  * @author webitproff
  * @copyright Copyright (c) webitproff 2025 | https://github.com/webitproff
  * @license BSD
@@ -28,4 +28,3 @@ if (!isset($_POST['rcat']) || !is_array($_POST['rcat']) || empty($_POST['rcat'])
             WHERE structure_id = $first_cat_id AND structure_area = 'market'";
     $item['fieldmrkt_cat'] = $db->query($sql)->fetchColumn() ?: $item['fieldmrkt_cat'];
 }
-
