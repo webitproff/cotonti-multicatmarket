@@ -1,4 +1,4 @@
-# 🇬🇧 Multicat Market — Multiple Categories for a Single Product in Market Module v.5.x.x (Cotonti Siena)
+# 🇬🇧 Multicat Market — Multiple Categories for a Single Product in Market Module v.5.x.x (CMF Cotonti v.1.0.0, PHP v.8.5+, MySQL v.8.4)
 
 ## Description and How It Works
 
