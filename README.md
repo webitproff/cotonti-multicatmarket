@@ -16,7 +16,13 @@ Thus, the plugin is completely transparent to the user and other extensions: eve
 
 > **Important:** The plugin will not work with your Market module if it is not version 5 and not developed by me.
 > You can order adaptation of the plugin for **[ freelance exchange builds](https://github.com/webitproff/cot_2waydeal_build)**. . To do so, **[write to me on the page](https://abuyfile.com/users/webitproff)**
+> 
+---
 
+---
+>
+> **[Help & Support](https://abuyfile.com/ru/forums/cotonti/custom/plugs/topic229)**
+> 
 ---
 
 ## Installation
@@ -449,12 +455,16 @@ WHERE p.fieldmrkt_id > 0
 Никаких изменений в ядро Cotonti и в модуль Market не вносится — всё реализовано через стандартные хуки и отдельную таблицу связей.
 
 Если вам нужно, чтобы один и тот же товар отображался в нескольких рубриках — просто установите Multicat Market и добавьте два тега в шаблоны редактирования карточки товара.
-
+---
+>
+> **[Help & Support](https://abuyfile.com/ru/forums/cotonti/custom/plugs/topic229)**
+> 
+---
 
 **Версия:** 1.1.0  
-**Дата:** 2025-12-05  
+**Дата:** 2026-09-11  
 **Автор:** webitproff  
-**Совместимость:** Cotonti Siena 0.9.26+, модуль Market v5+, PHP 8.1–8.4, MySQL 8.0+  
+**Совместимость:** Cotonti v.1+, модуль Market v5+, PHP 8.5, MySQL 8.4+  
 **Лицензия:** BSD  
 **Репозиторий:** https://github.com/webitproff/cotonti-multicatmarket 
 
