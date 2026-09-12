@@ -150,3 +150,91 @@ function multicatmarket_save_cats($page_id, $cats)
 
     return true;
 }
+
+
+/**
+ * Возвращает категории товара с данными, готовыми для вывода в шаблон:
+ * id, code, title (с учётом перевода i18n4marketpro), url.
+ *
+ * @param int         $page_id ID товара (fieldmrkt_id).
+ * @param string|null $locale  Локаль для перевода. null = текущая из i18n4marketpro.
+ * @return array
+ */
+function multicatmarket_get_cats_with_data($page_id, $locale = null)
+{
+    global $db, $db_structure, $structure;
+    global $i18n4marketpro_read, $i18n4marketpro_locale;
+
+    $page_id = (int)$page_id;
+    if ($page_id <= 0) {
+        return [];
+    }
+
+    $cat_ids = multicatmarket_get_cats($page_id);
+    if (empty($cat_ids)) {
+        return [];
+    }
+
+    $sql = "SELECT structure_id, structure_code, structure_title FROM $db_structure
+             WHERE structure_id IN (" . implode(',', array_map('intval', $cat_ids)) . ")
+               AND structure_area = 'market'";
+    $res = $db->query($sql);
+
+    $db_cats = [];
+    foreach ($res->fetchAll() as $row) {
+        $db_cats[(int)$row['structure_id']] = $row;
+    }
+
+    $i18nActive = cot_plugin_active('i18n4marketpro')
+        && function_exists('cot_i18n4marketpro_get_cat')
+        && !empty($i18n4marketpro_read);
+
+    if ($locale === null) {
+        if (!empty($i18n4marketpro_locale)) {
+            $locale = (string)$i18n4marketpro_locale;
+        } elseif (!empty(Cot::$usr['lang'])) {
+            $locale = (string)Cot::$usr['lang'];
+        } else {
+            $locale = (string)Cot::$cfg['defaultlang'];
+        }
+    }
+
+    $result = [];
+    foreach ($cat_ids as $cat_id) {
+        $cat_id = (int)$cat_id;
+        $code   = '';
+        $title  = '';
+
+        if (isset($db_cats[$cat_id])) {
+            $code  = (string)$db_cats[$cat_id]['structure_code'];
+            $title = (string)$db_cats[$cat_id]['structure_title'];
+        } else {
+            foreach ($structure['market'] as $scode => $cdata) {
+                if (isset($cdata['id']) && (int)$cdata['id'] === $cat_id) {
+                    $code  = (string)$scode;
+                    $title = (string)($cdata['title'] ?? $scode);
+                    break;
+                }
+            }
+            if ($code === '') {
+                continue;
+            }
+        }
+
+        if ($i18nActive && !empty($locale)) {
+            $translated = cot_i18n4marketpro_get_cat($code, $locale);
+            if ($translated && !empty($translated['title'])) {
+                $title = (string)$translated['title'];
+            }
+        }
+
+        $result[] = [
+            'id'    => $cat_id,
+            'code'  => $code,
+            'title' => $title,
+            'url'   => cot_url('market', ['c' => $code]),
+        ];
+    }
+
+    return $result;
+}
