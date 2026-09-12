@@ -150,3 +150,6 @@ $L['multicatmarket_confirm_massunlink']   = 'Delete all links of the selected it
 $L['multicatmarket_btn_unlink_short']     = 'Clear links';
 $L['multicatmarket_btn_unlink_selected']  = 'Clear links of selected';
 $L['multicatmarket_btn_edit_product']     = 'Edit item';
+
+$L['multicatmarket_market_cats_links']         = 'Product multicategories';
+$L['multicatmarket_market_cats_links_hint']    = 'Additional categories where this product is shown as similar.';
