@@ -150,3 +150,6 @@ $L['multicatmarket_confirm_massunlink']   = 'Удалить все связи в
 $L['multicatmarket_btn_unlink_short']     = 'Очистить связи';
 $L['multicatmarket_btn_unlink_selected']  = 'Очистить связи выбранных';
 $L['multicatmarket_btn_edit_product']     = 'Редактировать товар';
+
+$L['multicatmarket_market_cats_links']         = 'Мультикатегории товара';
+$L['multicatmarket_market_cats_links_hint']    = 'Дополнительные категории, в которых этот товар показывается как похожий.';
